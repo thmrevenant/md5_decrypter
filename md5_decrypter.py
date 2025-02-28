@@ -6,8 +6,8 @@ import hashlib
 md5_hash = input("Gib den MD5-Hash ein: ")
 start_string = input("Gib den Anfang des Strings ein (optional): ")
 
-# Zeichen, die getestet werden sollen (kann erweitert werden)
-chars = string.ascii_letters + string.digits + string.punctuation
+# Zeichen, die getestet werden sollen (alle möglichen Zeichen)
+chars = string.printable.strip()
 
 # Funktion zum Brute-Forcen
 def brute_force_md5(target_hash, prefix=""):
