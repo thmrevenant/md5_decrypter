@@ -1,35 +1,28 @@
+import hashlib
 import itertools
 import string
-import hashlib
 
-# Benutzerinput für den Hash
-md5_hash = input("Gib den MD5-Hash ein: ")
-start_string = input("Gib den Anfang des Strings ein (optional): ")
-
-# Zeichen, die getestet werden sollen (alle möglichen Zeichen)
-chars = string.printable.strip()
-
-# Funktion zum Brute-Forcen
-def brute_force_md5(target_hash, prefix=""):
-    # Prüfe zuerst den mitgegebenen Anfangsstring
-    if prefix:
-        hashed_prefix = hashlib.md5(prefix.encode()).hexdigest()
-        print(f"Test: {prefix}")
-        if hashed_prefix == target_hash:
-            print(f"MD5-Hash entschlüsselt: {prefix}")
-            return prefix
+def md5_crack(md5_hash, start_str, end_str, length):
+    chars = string.ascii_letters + string.digits + string.punctuation  # Zeichenraum (Buchstaben + Zahlen + Sonderzeichen)
+    attempt_counter = 0
     
-    length = 1
-    while True:
-        for combination in itertools.product(chars, repeat=length):
-            word = prefix + ''.join(combination)
-            hashed_word = hashlib.md5(word.encode()).hexdigest()
-            print(f"Test: {word}")
-            
-            if hashed_word == target_hash:
-                print(f"MD5-Hash entschlüsselt: {word}")
-                return word
-        length += 1
+    for mid_part in itertools.product(chars, repeat=length):
+        attempt_counter += 1
+        candidate = start_str + ''.join(mid_part) + end_str
+        generated_hash = hashlib.md5(candidate.encode()).hexdigest()
+        print(f"[{attempt_counter}] Testing: {candidate}")
+        
+        if generated_hash == md5_hash:
+            print(f"Match found! Password: {candidate}")
+            return candidate
+    
+    print("No match found.")
+    return None
 
-# Starte den Brute-Force-Prozess
-brute_force_md5(md5_hash, start_string)
+if __name__ == "__main__":
+    md5_hash = input("Enter MD5 hash to crack: ").strip()
+    start_str = input("Enter the starting string: ").strip()
+    end_str = input("Enter the ending string: ").strip()
+    length = int(input("Enter the number of characters between start and end: "))
+    
+    md5_crack(md5_hash, start_str, end_str, length)
